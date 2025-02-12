@@ -142,7 +142,7 @@ class Connection(gis_models.Model):
         ]
         constraints = [
             models.CheckConstraint(
-                check=models.Q(instance_1_id__lt=models.F('instance_2_id')),
+                condition=models.Q(instance_1_id__lt=models.F('instance_2_id')),
                 name='prevent_duplicate_connections'
             )
         ]

@@ -42,7 +42,9 @@ The project follows a domain-driven vertical slice architecture:
   /docs              # Documentation management
   /api               # REST API endpoints
   /tests             # Test suites
-  
+  /cad_engine        # Handles FreeCAD integrations
+  /core_logic        # Key system algorithms
+  /utils             # Includes utility modules used across the engine.
 /frontend
   /src
     /components      # Reusable UI components
@@ -108,6 +110,33 @@ Before setting up the project, ensure you have:
    # Frontend
    cd frontend
    npm start
+   ```
+
+7. Build cad_engine cpp bindings :
+
+```bash
+cd backend/cad_engine
+python setup.py build_ext --inplace   
+```
+
+8. build the C++ extensions for the parameters module:
+
+   ```bash
+   cd backend/parameters/build
+   cmake ..
+   cmake --build .
+   ```
+9. build the C++ extensions for the geometry module:
+
+   ```bash
+   cd backend/geometry
+   ./build.sh
+   ```
+
+10. Run the tests:
+
+   ```bash
+   pytest
    ```
 
 ## Development Guidelines

@@ -37,6 +37,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='connection',
-            constraint=models.CheckConstraint(check=models.Q(('instance_1__lt', models.F('instance_2'))), name='prevent_duplicate_connections'),
+            constraint=models.CheckConstraint(condition=models.Q(('instance_1__lt', models.F('instance_2'))), name='prevent_duplicate_connections'),
         ),
     ]

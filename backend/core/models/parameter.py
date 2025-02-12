@@ -191,6 +191,7 @@ class Parameter(models.Model):
 
         Args:
             value (float): The value to check
+            
             step (float): The step size
             min_val (float): The minimum value
 

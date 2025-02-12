@@ -12,7 +12,32 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import sys
+
+# Set GDAL environment variables BEFORE importing Django GDAL
+CONDA_PREFIX = os.getenv('CONDA_PREFIX')
+if CONDA_PREFIX:
+    os.environ['GDAL_LIBRARY_PATH'] = str(Path(CONDA_PREFIX) / 'lib' / 'libgdal.dylib')
+    os.environ['GEOS_LIBRARY_PATH'] = str(Path(CONDA_PREFIX) / 'lib' / 'libgeos_c.dylib')
+    os.environ['GDAL_DATA'] = str(Path(CONDA_PREFIX) / 'share' / 'gdal')
+    os.environ['PROJ_LIB'] = str(Path(CONDA_PREFIX) / 'share' / 'proj')
+
+    # Add FreeCAD to Python path
+    freecad_lib = Path(CONDA_PREFIX) / 'lib' / 'FreeCAD.so'
+    if freecad_lib.exists():
+        os.environ['FREECAD_LIB'] = str(freecad_lib)
+        FREECAD_PATH = str(freecad_lib.parent)  # Use the lib directory
+else:
+    FREECAD_PATH = None
+
+FREECAD_USER_PATH = os.path.join(os.path.expanduser('~'), '.FreeCAD')
+
+# Ensure FreeCAD user directory exists
+if FREECAD_USER_PATH:
+    os.makedirs(FREECAD_USER_PATH, exist_ok=True)
+
 from django.contrib.gis.gdal import GDAL_VERSION
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +68,9 @@ INSTALLED_APPS = [
 
     # Project apps
     'core',
+    'cad_engine',
+    'parameters',
+    'geometry',
 ]
 
 MIDDLEWARE = [
@@ -136,9 +164,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# GDAL Configuration
-GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
-if not GDAL_LIBRARY_PATH:
-    CONDA_PREFIX = os.getenv('CONDA_PREFIX')
-    if CONDA_PREFIX:
-        GDAL_LIBRARY_PATH = f"{CONDA_PREFIX}/lib/libgdal.dylib"
+if 'test' in sys.argv:
+    for db in DATABASES.values():
+        db['TEST'] = {
+            'NAME': 'test_' + db['NAME'],
+            'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        }
