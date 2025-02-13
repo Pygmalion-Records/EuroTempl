@@ -5,7 +5,7 @@ import os
 import sys
 import pytest
 from django.contrib.gis.geos import Point, GEOSGeometry
-from cad_engine.conversion import geos_to_freecad, freecad_to_geos
+from cad_engine.converters.geos_converter import geos_to_freecad, freecad_to_geos
 
 # Add FreeCAD lib directory to Python path
 CONDA_ENV = os.path.join(os.path.expanduser("~"), "miniforge3/envs/eurotempl")
